@@ -1,0 +1,35 @@
+service: financial-app
+
+provider:
+  name: aws
+  runtime: nodejs14.x
+  region: us-east-1 # Choose your AWS region
+  memorySize: 512 # Memory size for Lambda functions
+  timeout: 30 # Timeout for Lambda functions in seconds
+
+functions:
+  processTransaction:
+    handler: src/handlers/processTransaction.handler
+    events:
+      - http:
+          path: transaction
+          method: post
+          cors: true
+
+  retrieveTransaction:
+    handler: src/handlers/retrieveTransaction.handler
+    events:
+      - http:
+          path: transaction/{id}
+          method: get
+          cors: true
+
+plugins:
+  - serverless-offline # For local testing
+
+custom:
+  webpack:
+    webpackConfig: ./webpack.config.js
+    includeModules:
+      forceExclude:
+        - aws-sdk
